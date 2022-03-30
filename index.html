@@ -10,12 +10,17 @@
     <div>
       <h1> Profiler yields per-function coverage, despite per-block level being set</h1>
       </br>
-      If you enable coverage collection with per-block granularity, reloading page more than one or two times will cause coverage to have "per-function" level (per-block granularity is unavailable)</br>
+      <b>ISSUE</b>: When coverage collection with per-block granularity is enabled, reloading page more than one or two times will cause coverage to have "per-function" level (per-block granularity is unavailable)</br>
       </br>
       <a href="#the-issue">Issue</a> is reproducible with both <b>Chrome DevTools UI</b> and <b>Chrome DevTools Protocol</b>. This example demonstrates the issue with Chrome DevTools UI
       </br>
       <a href="https://chromedevtools.github.io/devtools-protocol/tot/Profiler/#method-startPreciseCoverage">DevTools API Reference</a>
       
+      <p style="font-size: 24px">
+        This page loads the <a href="./long.js">example script</a> to demonstrate the issue</br>
+        Please open DevTools and follow the instructions
+      </p>
+
       <h2>Why is this an issue?</h2>
         Q: Isn't reloading page once is sufficient to get a coverage? What is your use-case?
         </br>
@@ -23,8 +28,7 @@
       <h2> Important notes: </h2>
       <ol>
         <li>
-          Issue is not reproducible on _short_ (see <a href="./short.html">short.html</a>) scripts</br>
-          This page loads <a href="./long.js">long.js</a> script, which is >10k LOC
+          Issue is not reproducible on _short_ scripts (see <a href="./short.html">short.html</a> which loads <a href="./short.js">short.js</a>)</br>
         </li>
         </br>
         <li>
@@ -62,8 +66,6 @@
     </div>
     <h2 id="repro-steps"> Reproduction steps: </h2>
     <ol>
-      <li>Serve _this_ page (index.html) with webserver of your choice (ignore, if you opened this from a website)</li>
-      <li>Open it</li>
       <li>Open DevTools</li>
       <li>Open "Sources" tab on top, and select "long.js"</li>
       <li>Open "Coverage" tab on the bottom</li>
@@ -73,13 +75,12 @@
       <li>Refresh the page <b>once</b></li>
       <li>Note the correct results: 1. in capture results coverage type has <b>"per-block"</b> value 2. Line marked with comment is not covered</li>
       <img src="./3__After_the_first_refresh__coverage_is_per_block.PNG"/>
-      <li>Refresh the page <b>one more time</b></li>
-      <li>Note that results are unchanged</li>
-      <li>Refresh the page <b>last time</b></li>
-      <li style="color: red;" id="the-issue"><b>THE ISSUE:</b>
+      <li>Refresh the page <b>again</b></li>
+      <li>If results are unchanged, do it again</li>
+      <li style="color: red;" id="the-issue"><b>THE ISSUE: after one or two refreshes</b>
         <ol>
-          <li>coverage type field has "per-function" value (despite "per-block" is set in settings)</li>  
-          <li>Line marked with comment is covered now (this is impossible when per-block coverage is set)</li>
+          <li>coverage type field now has "per-function" value (despite "per-block" is set in settings)</li>  
+          <li>line marked with comment is covered now (which clearly indicates that this is per-function coverage, since this branch cannot be executed)</li>
         </ol>
       </li>
       <img src="./4__After_the_third_refresh__coverage_is_per_function.PNG"/>
