@@ -9,10 +9,17 @@
   <body style="font-family: Arial">
     <div>
       <h1> Profiler yields per-function coverage, despite per-block level being set</h1>
-      <a href="#the-issue">Issue</a> is reproducible with both <b>Chrome DevTools UI</b> and <b>Chrome DevTools Protocol</b> (called via Chrome extension)
+      </br>
+      If you enable coverage collection with per-block granularity, reloading page more than one or two times will cause coverage to have "per-function" level (per-block granularity is unavailable)</br>
+      </br>
+      <a href="#the-issue">Issue</a> is reproducible with both <b>Chrome DevTools UI</b> and <b>Chrome DevTools Protocol</b>. This example demonstrates the issue with Chrome DevTools UI
       </br>
       <a href="https://chromedevtools.github.io/devtools-protocol/tot/Profiler/#method-startPreciseCoverage">DevTools API Reference</a>
       
+      <h2>Why is this an issue?</h2>
+        Q: Isn't reloading page once is sufficient to get a coverage? What is your use-case?
+        </br>
+        A: We are developing tool to collect <span>coverage from UI automated tests</span> (via DevTools Protocol API). Sometimes page gets reloaded hundreds of times. Coverage, from all steps, is important and block-level granularity is what really matters</b>
       <h2> Important notes: </h2>
       <ol>
         <li>
@@ -26,7 +33,11 @@
         </li>
         </br>
         <li>
-          Issue is exactly reproducible with DevTools API (while <i>Profiler.startPreciseCoverage({ detailed: true })</i> sets per-block level granularity,  <i>Profiler.takePreciseCoverage()</i> yeilds per-function results, <b>if</b> conditions described in <a href="#repro-steps">Reproduction steps</a> are met
+          Issue is exactly reproducible with DevTools API (while <i>Profiler.startPreciseCoverage({ detailed: true })</i> sets per-block level granularity,  <i>Profiler.takePreciseCoverage()</i> yeilds per-function results (<i>isBlockCoverage: false</i>), <b>if</b> conditions described in <a href="#repro-steps">Reproduction steps</a> are met
+        </li>
+        </br>
+        <li>
+          This issue does not appear, if you do <b>hard-refresh</b> each time you reload the page or <b>disable the cache</b> via DevTools completely</br>. (<i>This is extremely poor solution in case of tracking automated UI tests coverage, since modern webapps rely on cache</a></i>)
         </li>
         </br>
       </ol>
@@ -72,10 +83,9 @@
         </ol>
       </li>
       <img src="./4__After_the_third_refresh__coverage_is_per_function.PNG"/>
-      <li>Interesting follow-up: <b>if you do hard-refresh (CTRL+F5) the page</b>, then coverage has "per-block" granularity again </li>
+      <li><b>If you hard-refresh (CTRL+F5) the page</b>, then coverage has "per-block" granularity again </li>
     </ol>
     <h2>What is happening/my guess</h2>
-    This issue completely vanishes, if you do <b>hard-refresh</b> each time you reload the page</br>
-    It might be some issue with either how Chrome passes cached scripts to V8, or V8 itself handles cached/compiled scripts (if such cache is a thing)
+    It might be an issue with either how Chrome passes cached scripts to V8, or V8 itself handles cached/compiled scripts instrumentation (if such cache is a thing)
   </body>
 </html>
