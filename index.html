@@ -28,6 +28,10 @@
       <h2> Important notes: </h2>
       <ol>
         <li>
+          Possible culprit is some sort of a cache. This issue does not appear, if you do <b>hard-refresh</b> each time you reload the page or <b>disable the cache</b> via DevTools completely</br>. (<i>This is extremely poor solution in case of tracking automated UI tests coverage, since modern webapps rely on cache</a></i>)
+        </li>
+        </br>
+        <li>
           Issue is not reproducible on _short_ scripts (see <a href="./short.html">short.html</a> which loads <a href="./short.js">short.js</a>)</br>
         </li>
         </br>
@@ -38,10 +42,6 @@
         </br>
         <li>
           Issue is exactly reproducible with DevTools API (while <i>Profiler.startPreciseCoverage({ detailed: true })</i> sets per-block level granularity,  <i>Profiler.takePreciseCoverage()</i> yeilds per-function results (<i>isBlockCoverage: false</i>), <b>if</b> conditions described in <a href="#repro-steps">Reproduction steps</a> are met
-        </li>
-        </br>
-        <li>
-          This issue does not appear, if you do <b>hard-refresh</b> each time you reload the page or <b>disable the cache</b> via DevTools completely</br>. (<i>This is extremely poor solution in case of tracking automated UI tests coverage, since modern webapps rely on cache</a></i>)
         </li>
         </br>
       </ol>
